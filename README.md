@@ -1,5 +1,5 @@
 # LLRT_whisper (Low Level Real Time whisper)
-A 'not very efficient' attemp to create a real time openai/whisper (Audio to Text Transcriber)
+This is a 'not very efficient' attemp to create a real time openai/whisper (Audio to Text Transcriber)
 
 The intention is to create an open-source device to help people with hearing impairments 🧏 to see what people are talking about.
 
