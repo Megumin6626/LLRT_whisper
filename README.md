@@ -1,7 +1,7 @@
 # LLRT_whisper (Low Level Real Time whisper)
 This is a 'not very efficient' attemp to create a real time openai/whisper (Audio to Text Transcriber)
 
-The intention is to create an open-source device to help people with hearing impairments to see what people are talking about.
+The intention is to create an open-source device to help people with hearing impairments 🧏 to see what people are talking about.
 
 ## Audio to Text Transcriber
 
@@ -259,3 +259,6 @@ Implement speaker identification by first applying a Fast Fourier Transform (FFT
 ###### Note : Just saying not attempted yet.
 
 Feel free to contribute to these ideas or propose new ones to enhance the functionality and performance of the project.
+
+## License
+Both Whisper's code and model weights, as well as this project's code, are released under the MIT License. This permissive license allows for reuse, modification, and distribution, both for commercial and non-commercial purposes, provided that the copyright notice and the license's permission notice are included in all copies or substantial portions of the software. See the `LICENSE` file for further details.
