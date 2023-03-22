@@ -8,16 +8,72 @@ This project is a simple Python script that transcribes audio input from the mic
 ## Features
 
 - Microphone selection
-- Background noise and speech volume calibration
+- Background noise and speech volume calibration (For speech detection)
 - Language selection
 - Audio queue system
 - ~~Audio storage in RAM instead of on disk~~ (Fail)
 
-## Setup
+## Requirements
 
-1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) if you haven't already.
-2. Create a new Conda environment:
+- Python 3.10
+- CUDA 11.7
 
-`conda create --name LLRT_whisper python=3.10`
+## Setup (CPU Only ver)
 
-`conda activate LLRT_whisper`
+#### 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) if you haven't already.
+#### 2. Create a new Conda environment:
+
+  `conda create --name LLRT_whisper python=3.10`
+
+  `conda activate LLRT_whisper`
+  
+#### 3. Install the required libraries:
+
+`pip install pyaudio`
+
+`pip install whisper`
+
+#### 4. To ensure the `whisper` library functions correctly, you also need to have `ffmpeg` installed on your system. Below are instructions for installing `ffmpeg` on different platforms.
+
+### Installing ffmpeg
+
+#### Ubuntu or Debian
+
+`sudo apt update && sudo apt install ffmpeg`
+
+#### Arch Linux
+
+`sudo pacman -S ffmpeg`
+
+#### MacOS (using Homebrew)
+If you don't have Homebrew installed, you can install it from https://brew.sh/.
+
+`brew install ffmpeg`
+
+#### Windows (using Chocolatey)
+If you don't have Chocolatey installed, you can install it from https://chocolatey.org/.
+
+`choco install ffmpeg`
+
+#### Windows (using Scoop)
+If you don't have Scoop installed, you can install it from https://scoop.sh/.
+
+`scoop install ffmpeg`
+
+#### 4. Clone the repository: 
+
+`git clone https://github.com/your-username/your-repo-name.git`
+
+#### 5. Change to the project directory: 
+
+`cd whisper_realtime_cpu`
+
+#### 6. Run the script to start: 
+
+`python Whisper_RT_CPU_Only.py`
+
+Follow the on-screen instructions to set up the microphone, threshold, and language.
+
+After the initial setup, the script will continuously listen to your microphone and transcribe the audio in real-time.
+
+
