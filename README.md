@@ -37,9 +37,13 @@ The script follows these steps:
 
 ## Setup (CPU Only version)
 
-#### 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) if you haven't already.
+#### 1a. Install Python 3.10 for your specific operating system.
+#### [Python 3.10 For Windows](https://www.python.org/downloads/windows/)
+#### [Python 3.10 For MacOS](https://www.python.org/downloads/macos/)
+#### [Python 3.10 For Linux/UNIX](https://www.python.org/downloads/source/)
+#### 1b. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) if you haven't already.
 #### 2. Create a new Conda environment:
-
+###### In Anaconda Prompt (miniconda3)
   `conda create --name LLRT_whisper python=3.10`
 
   `conda activate LLRT_whisper`
@@ -58,7 +62,7 @@ The script follows these steps:
 
 # Ubuntu or Debian
 
-`sudo apt update && sudo apt install ffmpeg`
+sudo apt update && sudo apt install ffmpeg
 
 # Arch Linux
 
@@ -69,6 +73,8 @@ sudo pacman -S ffmpeg
 brew install ffmpeg
 
 # Windows (using Chocolatey) If you don't have Chocolatey installed, you can install it from https://chocolatey.org/.
+# To install chocolatey run Anaconda Powershell Prompt (miniconda3) in Admin and run
+# Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
 choco install ffmpeg
 
@@ -142,7 +148,50 @@ Follow the on-screen instructions to set up the microphone, threshold, and langu
 
 After the initial setup, the script will continuously listen to your microphone and transcribe the audio in real-time using your GPU.
 
-## Code explan
+
+## Flow Chart to illustrate how the code works:
+```bash
+
+1. Start
+|
+2. List available microphones and prompt user to choose one
+|
+3. Choose threshold (use previous, measure new, or enter custom value)
+|
+4. Choose language for transcription
+|
+5. Initialize audio_queue and start two threads:
+   |
+   5.1. Thread 1: record_audio()
+   |     |
+   |     5.1.1. Continuously record audio from microphone
+   |     |
+   |     5.1.2. If audio level exceeds threshold, start recording
+   |     |
+   |     5.1.3. If audio level falls below threshold for 0.6 seconds, stop recording
+   |     |
+   |     5.1.4. Save recorded audio as a wave file and add it to audio_queue
+   |
+   5.2. Thread 2: process_audio_queue()
+         |
+         5.2.1. Load Whisper model
+         |
+         5.2.2. Continuously process audio files in audio_queue
+               |
+               5.2.2.1. Transcribe audio using chosen language
+               |
+               5.2.2.2. Print transcribed text to console
+               |
+               5.2.2.3. Remove processed audio file
+|
+6. Wait for both threads to finish (This should run indefinitely until interrupted)
+|
+7. End
+```
+
+
+## Code explan 
+###### STOP HERE TO KEEP YOUR SANITY
 
 #### `get_unique_devices(p)`
 
@@ -159,6 +208,7 @@ How fast the recording will stop when it is silence can be chage here
 
 
 `if silent_frames > 0.6 * RATE / CHUNK: # stop recording after 0.6 seconds of silence`
+###### Sidenote: When this is set too low and the file is created too fast, somehow the audio file might be deleted before being processed. This method also poses another problem. If the environment noise suddenly becomes very loud and swamp the threshold, the recording might not be able to stop itself.
 
 #### `process_audio_queue(audio_queue, language)`
 
