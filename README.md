@@ -13,10 +13,27 @@ This project is a simple Python script that transcribes audio input from the mic
 - Audio queue system
 - ~~Audio storage in RAM instead of on disk~~ (Fail)
 
+
+## How It Works
+
+The script follows these steps:
+
+1. Microphone selection: Allows the user to choose the desired microphone to record audio input.
+2. Threshold selection: Users can choose from using the previous calibration, start a new calibration, or manually set a threshold.
+3. Language selection: Users can choose the language for transcription or use auto-detection.
+4. Record audio input: The script records audio input from the microphone and stores it in a queue.
+5. Process audio queue: Another thread processes the audio queue, transcribes the audio into text using the chosen language, and prints the result.
+
+## Notes
+
+- This script is compatible with Python 3.10
+- The supported audio formats for the `whisper` library are .wav and .mp3.
+
+
 ## Requirements
 
 - Python 3.10
-- CUDA 11.7
+
 
 ## Setup (CPU Only ver)
 
@@ -62,11 +79,11 @@ If you don't have Scoop installed, you can install it from https://scoop.sh/.
 
 #### 4. Clone the repository: 
 
-`git clone https://github.com/your-username/your-repo-name.git`
+`git clone https://github.com/Megumin6626/LLRT_whisper.git`
 
 #### 5. Change to the project directory: 
 
-`cd whisper_realtime_cpu`
+`cd LLRT_whisper`
 
 #### 6. Run the script to start: 
 
