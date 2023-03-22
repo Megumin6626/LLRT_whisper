@@ -1,7 +1,7 @@
 # LLRT_whisper (Low Level Real Time whisper)
 This is a not very efficient attemp to create a real time openai/whisper (Audio to Text Transcriber) But It work :)
 
-# Audio to Text Transcriber
+## Audio to Text Transcriber
 
 This project is a simple Python script that transcribes audio input from the microphone into text using the `whisper` library. The script records audio input, processes it in a queue, and transcribes the audio into text using the chosen language.
 
@@ -35,7 +35,7 @@ The script follows these steps:
 - Python 3.10
 
 
-## Setup (CPU Only ver)
+## Setup (CPU Only version)
 
 #### 1. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) if you haven't already.
 #### 2. Create a new Conda environment:
@@ -93,4 +93,50 @@ Follow the on-screen instructions to set up the microphone, threshold, and langu
 
 After the initial setup, the script will continuously listen to your microphone and transcribe the audio in real-time.
 
+# Enable GPU acceleration
 
+#### Before continuous you should have the CPU version setup make sure it work.
+
+This guide will help you set up and run the GPU version of the real-time transcription script using OpenAI's `whisper` library.
+
+## Requirements
+
+- CUDA Toolkit 11.7
+
+## Setup
+
+### Installing CUDA Toolkit 11.7
+
+Follow the instructions on the NVIDIA website to install the [CUDA Toolkit 11.7](https://developer.nvidia.com/cuda-toolkit-archive).
+
+### Installing Python Dependencies
+
+In the same environment, run the following commands:
+
+```bash
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu117
+pip install torchaudio
+pip install soundfile
+```
+## Testing GPU Support
+
+After installing the dependencies, run the GPU_test.py script to check if your GPU is working properly:
+
+`python GPU_test.py`
+
+If the GPU is working, you should see the following output:
+
+```bash
+Torch version: 2.0.0+cu117
+CUDA available: True
+```
+
+## Running the GPU-Enabled Transcription Script
+
+Once your GPU is set up and working, run the Whisper_RT_GPU.py script to start the real-time transcription with GPU support:
+
+`python Whisper_RT_GPU.py`
+
+Follow the on-screen instructions to set up the microphone, threshold, and language.
+
+After the initial setup, the script will continuously listen to your microphone and transcribe the audio in real-time using your GPU.
