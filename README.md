@@ -54,28 +54,29 @@ The script follows these steps:
 
 ### Installing ffmpeg
 
-#### Ubuntu or Debian
+```bash
+
+# Ubuntu or Debian
 
 `sudo apt update && sudo apt install ffmpeg`
 
-#### Arch Linux
+# Arch Linux
 
-`sudo pacman -S ffmpeg`
+sudo pacman -S ffmpeg
 
-#### MacOS (using Homebrew)
-If you don't have Homebrew installed, you can install it from https://brew.sh/.
+# MacOS (using Homebrew) If you don't have Homebrew installed, you can install it from https://brew.sh/.
 
-`brew install ffmpeg`
+brew install ffmpeg
 
-#### Windows (using Chocolatey)
-If you don't have Chocolatey installed, you can install it from https://chocolatey.org/.
+# Windows (using Chocolatey) If you don't have Chocolatey installed, you can install it from https://chocolatey.org/.
 
-`choco install ffmpeg`
+choco install ffmpeg
 
-#### Windows (using Scoop)
-If you don't have Scoop installed, you can install it from https://scoop.sh/.
+# Windows (using Scoop) If you don't have Scoop installed, you can install it from https://scoop.sh/.
 
-`scoop install ffmpeg`
+scoop install ffmpeg
+
+```
 
 #### 4. Clone the repository: 
 
