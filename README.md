@@ -1,5 +1,7 @@
 # LLRT_whisper (Low Level Real Time whisper)
-This is a not very efficient attemp to create a real time openai/whisper (Audio to Text Transcriber) But It work :)
+This is a 'not very efficient' attemp to create a real time openai/whisper (Audio to Text Transcriber)
+
+The intention is to create an open-source device to help people with hearing impairments to see what people are talking about.
 
 ## Audio to Text Transcriber
 
@@ -235,3 +237,25 @@ These functions save and load the previously chosen language for transcription t
 #### `choose_language()`
 
 This function allows the user to choose the input language for transcription.
+
+## Further Development
+
+I have identified several areas where the project can be improved. If you are interested in contributing or have ideas of your own, feel free to open an issue or submit a pull request. Some of the areas for future development include:
+
+#### 1. Save audio files in RAM
+Storing audio files in RAM instead of writing them to the SSD can help extend the lifespan of the storage device, as frequent writing and erasing of files can wear out an SSD.
+###### Note : attempted but fail due to me suck at codeing.  :( 
+
+#### 2. Improve voice activity detection 
+Explore more efficient methods for determining when the user is speaking, such as implementing a Voice Activity Detector (VAD). 
+###### Note : in my attempt the effectiveness of VAD may vary depending on the hardware being used so.
+
+#### 3. Modify record_audio function
+Update the `record_audio(threshold, audio_queue)` function to stop and create a new audio file after a certain amount of time(eg. 30s). This will prevent the threshold from being overwhelmed by noise and generating infinitely long audio clips. 
+###### Note : in my attempt this feature should coexist with the current functionality of stopping the recording after 0.6 seconds of silence due to me suck at codeing.  :( 
+
+#### 4. Speaker identification
+Implement speaker identification by first applying a Fast Fourier Transform (FFT) to the audio data and determining the overall speaking pitch. This information can then be used to identify who is speaking in the conversation.
+###### Note : Just saying not attempted yet.
+
+Feel free to contribute to these ideas or propose new ones to enhance the functionality and performance of the project.
