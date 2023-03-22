@@ -258,6 +258,10 @@ Update the `record_audio(threshold, audio_queue)` function to stop and create a 
 Implement speaker identification by first applying a Fast Fourier Transform (FFT) to the audio data and determining the overall speaking pitch. This information can then be used to identify who is speaking in the conversation.
 ###### Note : Just saying not attempted yet.
 
+#### 5. Add support to `Faster Whisper by guillaumekln`
+which is up to 4 times faster than openai/whisper for the same accuracy while using less memory.
+`https://github.com/guillaumekln/faster-whisper`
+
 Feel free to contribute to these ideas or propose new ones to enhance the functionality and performance of the project.
 
 ## License
