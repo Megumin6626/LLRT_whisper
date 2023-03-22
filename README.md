@@ -141,3 +141,47 @@ Once your GPU is set up and working, run the Whisper_RT_GPU.py script to start t
 Follow the on-screen instructions to set up the microphone, threshold, and language.
 
 After the initial setup, the script will continuously listen to your microphone and transcribe the audio in real-time using your GPU.
+
+## Code explan
+
+#### `get_unique_devices(p)`
+
+This function takes a PyAudio object and returns a dictionary of unique audio devices (microphones) found on the system.
+
+#### `save_microphone_index(mic_index)` and `load_microphone_index()`
+
+These functions save and load the previously chosen microphone index to a file ("microphones_setting.txt").
+
+#### `record_audio(threshold, audio_queue)`
+
+This function records audio from the selected microphone and stores the recorded audio as a wave file. It uses a threshold value to determine when to start and stop recording. The recorded audio files are added to a queue for further processing.
+How fast the recording will stop when it is silence can be chage here
+
+
+`if silent_frames > 0.6 * RATE / CHUNK: # stop recording after 0.6 seconds of silence`
+
+#### `process_audio_queue(audio_queue, language)`
+
+This function takes the audio queue and language as input, loads the Whisper model, and transcribes the audio files in the queue. The transcribed text is then printed on the screen.
+
+#### `measure_threshold()`
+
+This function measures the sound intensity of background noise and speech levels to determine a suitable threshold for starting and stopping audio recording.
+The threshold calculated using `threshold = (background + speech) / 2`
+
+
+#### `save_threshold(threshold)` and `load_threshold()`
+
+These functions save and load the previously measured threshold value to a file ("threshold.txt").
+
+#### `choose_threshold()`
+
+This function allows the user to choose how to set the threshold value: use the previously saved threshold, measure a new threshold, or enter a custom threshold value.
+
+#### `save_language(language)` and `load_language()`
+
+These functions save and load the previously chosen language for transcription to a file ("language_settings.txt").
+
+#### `choose_language()`
+
+This function allows the user to choose the input language for transcription.
