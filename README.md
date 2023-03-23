@@ -251,8 +251,8 @@ Explore more efficient methods for determining when the user is speaking, such a
 ###### Note : in my attempt the effectiveness of VAD may vary depending on the hardware being used so.
 
 #### 3. Modify record_audio function
-Update the `record_audio(threshold, audio_queue)` function to stop and create a new audio file after a certain amount of time(eg. 30s). This will prevent the threshold from being overwhelmed by noise and generating infinitely long audio clips. 
-###### Note : in my attempt this feature should coexist with the current functionality of stopping the recording after 0.6 seconds of silence due to me suck at codeing.  :( 
+~~Update the `record_audio(threshold, audio_queue)` function to stop and create a new audio file after a certain amount of time(eg. 30s). This will prevent the threshold from being overwhelmed by noise and generating infinitely long audio clips.~~ 
+###### Note : Problem is addressed with another approach.Now the Slience time will turn into 0s after a certain of time. For more detail check `Update Log - 2023-03-23 V1.1`
 
 #### 4. Speaker identification
 Implement speaker identification by first applying a Fast Fourier Transform (FFT) to the audio data and determining the overall speaking pitch. This information can then be used to identify who is speaking in the conversation.
