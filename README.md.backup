@@ -191,7 +191,7 @@ After the initial setup, the script will continuously listen to your microphone 
 ```
 
 
-## More on code explanation
+## Code explan 
 ###### STOP HERE TO KEEP YOUR SANITY
 
 #### `get_unique_devices(p)`

@@ -1,0 +1,23 @@
+Update Log - 2023-03-23 V1.1
+
+1. Added two new global variables - SLIENCE_TIME and SLIENCE_CUT_OUT_TIME:
+   - SLIENCE_TIME: Controls the silence duration that triggers the end of recording.
+   - SLIENCE_CUT_OUT_TIME: Specifies the time after which SLIENCE_TIME will be multiplied by 0.
+
+2. Updated the condition for stopping the recording based on the new global variables:
+   - Modified the if statement in the record_audio function to consider SLIENCE_TIME and SLIENCE_CUT_OUT_TIME.
+   - The new approach addresses the issue of infinitely long audio clips by ensuring that the recording stops and creates a new audio file after a certain amount of time (e.g., 30 seconds) to prevent the threshold from being overwhelmed by noise.
+   - The implementation effectively limits the maximum recording duration by modifying SLIENCE_TIME based on the SLIENCE_CUT_OUT_TIME value, allowing the system to adapt to varying noise levels and recording conditions.
+
+3. Introduced a new global variable - WHISPER_MODEL:
+   - Set the default value to "tiny" and added a comment with available model selections (tiny, base, small, medium, large).
+   - Replaced the hardcoded model name in the process_audio_queue function with the new global variable.
+
+4. Created a new global variable - AUDIO_FILE_EXTENSION:
+   - Set the default value to ".wav"
+   - Replaced the hardcoded file extension in the record_audio function with the new global variable.
+
+5. Removed torchaudio dependency:
+   - Torchaudio is no longer used in the program, so it has been removed from the code.
+   - Consequently, the installation requirements have been updated, and torchaudio is no longer listed as a required package.
+

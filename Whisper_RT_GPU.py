@@ -7,7 +7,6 @@ import queue
 import threading
 import os
 import torch
-import torchaudio
 import soundfile as sf
 
 # Check for GPU availability
@@ -19,23 +18,29 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 
-def get_unique_devices(p):
+# Define global variables
+SLIENCE_TIME = 0.5
+SLIENCE_CUT_OUT_TIME = 30
+WHISPER_MODEL = "tiny"          # Available model selections: tiny, base, small, medium, large
+AUDIO_FILE_EXTENSION = ".mp3"   # Available extension selections: .wav, .mp3
+
+def get_unique_devices(port):
     devices = {}
-    for i in range(p.get_device_count()):
-        dev = p.get_device_info_by_index(i)
-        if dev['name'] not in devices:
-            devices[dev['name']] = i
+    for i in range(port.get_device_count()):
+        device_available = port.get_device_info_by_index(i)
+        if device_available['name'] not in devices:
+            devices[device_available['name']] = i
     return devices
 
 def save_microphone_index(mic_index):
-    with open("microphones_setting.txt", "w") as f:
+    with open("GPU_version/microphones_setting.txt", "w") as f:
         f.write(str(mic_index))
 
 def load_microphone_index():
-    if not os.path.exists("microphones_setting.txt"):
+    if not os.path.exists("GPU_version/microphones_setting.txt"):
         return None
 
-    with open("microphones_setting.txt", "r") as f:
+    with open("GPU_version/microphones_setting.txt", "r") as f:
         mic_index = int(f.read())
     return mic_index
 
@@ -51,6 +56,7 @@ def record_audio(threshold, audio_queue):
         frames = []
         silent_frames = 0
         recording_started = False
+        recording_start_time = None  # Initialize the recording start time variable
 
         while True:
             audio_data = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
@@ -60,14 +66,22 @@ def record_audio(threshold, audio_queue):
                 silent_frames = 0
                 if not recording_started:
                     recording_started = True
+                    recording_start_time = time.time()  # Set the recording start time
+
             if recording_started:
                 frames.append(audio_data)
-            if silent_frames > 0.8 * RATE / CHUNK:  # stop recording after 0.5 seconds of silence
+
+            recording_duration = time.time() - recording_start_time if recording_start_time else 0
+
+            # Update the silence time based on the recording duration
+            silence_time = SLIENCE_TIME * (1 if recording_duration <= SLIENCE_CUT_OUT_TIME else 0)
+
+            if silent_frames > silence_time * RATE / CHUNK:  # stop recording after silence_time seconds of silence
                 if recording_started:
                     break
 
         # save the recorded audio to a file
-        filename = f"output_{int(time.time())}.wav"   # Change the file extension here (wav or mp3)
+        filename = f"output_{int(time.time())}{AUDIO_FILE_EXTENSION}"
         wf = wave.open(filename, "wb")
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
@@ -78,7 +92,7 @@ def record_audio(threshold, audio_queue):
 
 
 def process_audio_queue(audio_queue, language):
-    model = whisper.load_model("base")   # we got tiny / base / small / medium / large
+    model = whisper.load_model(WHISPER_MODEL)
     print(f"Language set to [{language if language != 'auto' else 'auto-detect'}] Please give a minute to load the model")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # Determine the device (GPU or CPU)
@@ -147,14 +161,14 @@ def measure_threshold():
 
 
 def save_threshold(threshold):
-    with open("threshold.txt", "w") as f:
+    with open("GPU_version/threshold.txt", "w") as f:
         f.write(str(threshold))
 
 def load_threshold():
-    if not os.path.exists("threshold.txt"):
+    if not os.path.exists("GPU_version/threshold.txt"):
         return None
 
-    with open("threshold.txt", "r") as f:
+    with open("GPU_version/threshold.txt", "r") as f:
         threshold = float(f.read())
     return threshold
 
@@ -197,17 +211,17 @@ def choose_threshold():
 
 
 def save_language(language):
-    with open("language_settings.txt", "w") as f:
+    with open("GPU_version/language_settings.txt", "w") as f:
         if language is None:
             f.write('')
         else:
             f.write(language)
 
 def load_language():
-    if not os.path.exists("language_settings.txt"):
+    if not os.path.exists("GPU_version/language_settings.txt"):
         return None
 
-    with open("language_settings.txt", "r") as f:
+    with open("GPU_version/language_settings.txt", "r") as f:
         language = f.read().strip()
     return language
 
