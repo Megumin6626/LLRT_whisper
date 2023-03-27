@@ -21,3 +21,20 @@ Update Log - 2023-03-23 V1.1
    - Torchaudio is no longer used in the program, so it has been removed from the code.
    - Consequently, the installation requirements have been updated, and torchaudio is no longer listed as a required package.
 
+================================================================================================================================
+
+Update Log - 2023-03-26 V1.2
+
+1. Added an option to display or hide processing time:
+   - Introduced a new parameter, display_process_time, in the process_audio_queue function.
+   - By setting this parameter to True, processing time and speed factor will be displayed for each transcription.
+   - To hide the processing time display, set the display_process_time parameter to False.
+
+2. Code refactoring and optimization:
+   - Rearranged and restructured code for better organization and readability.
+   - Moved local variables that could be used across multiple functions into global variables for easier configuration and maintenance.
+   - Optimized performance by removing redundant code and implementing more efficient logic.
+
+3. Updated documentation and comments:
+   - Expanded inline comments to provide better context and explanation for code sections.
+
