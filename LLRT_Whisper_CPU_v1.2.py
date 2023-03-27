@@ -66,15 +66,25 @@ def load_microphone_index():
     return mic_index
 
 def record_audio(threshold, audio_queue):
+    """
+    a callback function in the record_thread. 
+
+    params:
+    threshold(float): mean threshold configured from choose_threshold(). 
+    audio_queue(queue object): the record_thread communicates to audio_queue. 
+
+    returns:
+    None
+    """
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT,
                     channels=CHANNELS,
                     rate=RATE,
                     input=True,
                     frames_per_buffer=CHUNK)
-
+    
     while True:
-        frames = []
+        frames_background = []
         silent_frames = 0
         recording_started = False
         recording_start_time = None  # Initialize the recording start time variable
@@ -90,7 +100,7 @@ def record_audio(threshold, audio_queue):
                     recording_start_time = time.time()  # Set the recording start time
 
             if recording_started:
-                frames.append(audio_data)
+                frames_background.append(audio_data)
 
             recording_duration = time.time() - recording_start_time if recording_start_time else 0
 
@@ -106,7 +116,7 @@ def record_audio(threshold, audio_queue):
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
         wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))
+        wf.writeframes(b''.join(frames_background))
         wf.close()
         audio_queue.put(filename)
 
@@ -148,6 +158,11 @@ def process_audio_queue(audio_queue, language, display_process_time=True):   # T
 
 
 def measure_threshold():
+    """
+    called by choose_threshold(). records the background noise and speaker's voice seperately to measures the background noise and speakers'db to calculate a threshold.  returns the threshold, which is passed to save_threshold() as argument
+
+    """
+    # open audio port and instantiate audio stream
     p = pyaudio.PyAudio()
     stream = p.open(format=FORMAT,
                     channels=CHANNELS,
@@ -155,32 +170,40 @@ def measure_threshold():
                     input=True,
                     frames_per_buffer=CHUNK)
 
-    print("Please be quiet for 5 seconds while we measure the background noise...")
-
-    frames = []
+    # record 5 seconds background noise
+    print('Please be quiet for 5 seconds while we measure the background noise...')
+    ready = input('press enter to start recording the background noise')
+    print('recording in process')
+    frames_background = []
     for i in range(0, int(RATE / CHUNK * 5)):
         data = stream.read(CHUNK)
-        frames.append(data)
+        frames_background.append(data)
 
-    print("Please speak for 5 seconds...")
-
-    frames2 = []
+    # record 5 seconds human voice
+    print("Please speak for 5 seconds")
+    ready = input("press enter to start recording")
+    print('recording in progress')
+    frames_speak = []
     for i in range(0, int(RATE / CHUNK * 5)):
         data = stream.read(CHUNK)
-        frames2.append(data)
+        frames_speak.append(data)
 
+    # terminate audio stream
     stream.stop_stream()
     stream.close()
     p.terminate()
 
-    audio_data = np.frombuffer(b''.join(frames), dtype=np.int16)
+    # retrieve the average db of background noise
+    audio_data = np.frombuffer(b''.join(frames_background), dtype=np.int16)
     background = np.abs(audio_data).mean()
     print(f"Background noise set to {background}")
 
-    audio_data = np.frombuffer(b''.join(frames2), dtype=np.int16)
+    # retrieve the average db of the human voice
+    audio_data = np.frombuffer(b''.join(frames_speak), dtype=np.int16)
     speech = np.abs(audio_data).mean()
     print(f"Speech volume set to {speech}")
 
+    # set threshold
     threshold = (background + speech) / 2
     print(f"Threshold set to {threshold}")
 
@@ -188,10 +211,18 @@ def measure_threshold():
 
 
 def save_threshold(threshold):
+    """
+    receives custom threshold from user, from measure_threshold. write the threshold into threshold.txt
+    """
     with open("threshold.txt", "w") as f:
         f.write(str(threshold))
 
 def load_threshold():
+    """
+    is called by choose_threshold to load previous threshold setting, returns the loaded threshold(float)
+    """
+
+    # cannot find previous threshold settings
     if not os.path.exists("threshold.txt"):
         return None
 
@@ -206,7 +237,7 @@ def choose_threshold():
     Params:
     None
 
-    Outputs:
+    Returns:
     threshold(float)
 
     """
@@ -257,13 +288,19 @@ def choose_threshold():
 
 
 def save_language(language):
+    """
+    called by choose_language() to write the chosen language into language_setting.txt
+    """
     with open("language_settings.txt", "w") as f:
-        if language is None:
-            f.write('')
-        else:
+        if language is not None:
             f.write(language)
 
 def load_language():
+    """
+    called by choose_language() to load previous language selection. returns the loaded language.
+    """
+
+    # no language_settings.txt is found
     if not os.path.exists("language_settings.txt"):
         return None
 
@@ -273,23 +310,25 @@ def load_language():
 
 def choose_language():
     """
-    prompts user to choose language 
+    prompts user to choose language, returns the language ro be used by the whisper models
+
     Params:
+    None
 
     Returns:
     language(str): abbreviation of languages corresponding to whisper supported languages
 
     """
-    # Define the supported_languages list at the beginning of the function
+    # supported language abbreviations for the whisper sdk
     supported_languages = [
-        "auto",  # Changed from None to "auto"
+        "auto", 
         "af", "ar", "hy", "az", "bs", "bg", "ca", "zh", "hr", "cs", "da", "nl", "en", "et", "fi", "fr", "gl", "de",
         "el", "he", "hi", "hu", "is", "id", "it", "ja", "kn", "kk", "ko", "lv", "lt", "mk", "ms", "mi", "mr", "ne",
         "no", "fa", "pl", "pt", "ro", "ru", "sr", "sk", "sl", "es", "sw", "sv", "tl", "ta", "th", "uk", "ur", "vi",
         "cy"
     ]
 
-    # Define the language_names list
+    # Language choices available to show to the users
     language_names = [
         "Last selection", "Auto detect", "Afrikaans", "Arabic", "Armenian", "Azerbaijani", "Bosnian", "Bulgarian",
         "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "Estonian", "Finnish", "French",
@@ -307,9 +346,9 @@ def choose_language():
 
         try:
             choice = int(input("Enter the number of the language you want to use: "))
-            if choice == 0:     # auto MEANS use previous used language???? -aster
+            if choice == 0:     
                 last_language = load_language()
-                if last_language is None:
+                if last_language is None:               # previous language not found
                     print("No previous language selection found. Please choose a language.")
                 else:
                     language = last_language
@@ -367,16 +406,30 @@ if __name__ == "__main__":
             print("Wrong option, please enter again.")
 
 
-    threshold = choose_threshold()      # prompts user to load or measure threshold
+    threshold = choose_threshold()      
+    # prompts user to load or measure threshold. the updated threshold is saved in threshold.txt
     language = choose_language()        
+    # user load or choose language. the updated language selection is saved in language_setting.txt
 
     audio_queue = queue.Queue(maxsize=0)
+    # pass audio data between 2 threads:
+
+
+    # record_thread to record audio data and puts it into the queue
+    # process_thread to retrieve audio data from the queue and process it in real time
 
     record_thread = threading.Thread(target=record_audio, args=(threshold, audio_queue))
+    # instantiate Thread object that executes the record_audio function with 2 args: threshold (to determine when to start and stop recording) and the audio_queue object( to pass audio data to the processing thread)
+
+
     process_thread = threading.Thread(target=process_audio_queue, args=(audio_queue, language))
+    # instantiate Thread object that executes the process_audio_queue function with 2 args: audio_queue object (from the recording thread) and the language
 
     record_thread.start()
     process_thread.start()
+    # 2 threads executes concurrently and communicate to each other via the audio queue
 
     record_thread.join()
     process_thread.join()
+    # wait for both threads to complete their execution before the program exits
+    # ensure that all audio data is fully recorded and processed before the program terminates
